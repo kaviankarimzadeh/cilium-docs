@@ -4,11 +4,11 @@ Maglev is a consistent hashing–based load-balancing algorithm originally desig
 
 ## How to Enable
 
-```
+```bash
 head -c12 /dev/urandom | base64 -w0
 ```
 
-```
+```bash
 cilium upgrade --set loadBalancer.algorithm=maglev --set maglev.hashSeed=cQbV704rk6lMw92b
 ```
 

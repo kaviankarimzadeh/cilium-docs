@@ -1,8 +1,8 @@
 ## Kubernetes Ingress
 
-Cilium uses the standard Kubernetes Ingress resource definition, with an ingressClassName of cilium.
+Cilium uses the standard Kubernetes Ingress resource definition, with an `ingressClassName` of `cilium`.
 
-* The ingress controller creates a Service of LoadBalancer type, so your environment will need to support this.
+* The ingress controller creates a Service of `LoadBalancer` type, so your environment will need to support this.
 
 ## Load Balancer Modes for the Ingress Resource
 
@@ -15,38 +15,44 @@ There are two load balancer modes available:
 ### What Dedicated vs Shared Modes Mean in Cilium Ingress
 
 #### Dedicated Mode
-Yes — each Ingress gets its own LoadBalancer Service and its own external IP/FQDN.
-Cilium will create a separate Service of type LoadBalancer for each Ingress resource. That means a unique LB IP per Ingress.
-Example:
+* each Ingress gets its own LoadBalancer Service and its own external IP/FQDN.
+* Cilium will create a separate Service of type LoadBalancer for each Ingress resource. That means a unique LB IP per Ingress.
+
+- Example:
 If you have 3 Ingresses, you get 3 distinct LoadBalancer Services and 3 external IPs.
+
 When it’s useful
-You want strict isolation.
-You want separate IPs because you don’t want conflicts in host/path routing configuration.
-You want different annotations, LB settings, specific IPs per Ingress.
+* You want strict isolation.
+* You want separate IPs because you don’t want conflicts in host/path routing configuration.
+* You want different annotations, LB settings, specific IPs per Ingress.
+
 Drawbacks
-Consumes more resources (external IPs, LoadBalancer services).
-Might increase cloud load balancer costs if running on cloud.
+* Consumes more resources (external IPs, LoadBalancer services).
+* Might increase cloud load balancer costs if running on cloud.
 
 
 ✅ Shared mode
-All Ingress resources share one single LoadBalancer Service.
+*  All Ingress resources share `one single LoadBalancer Service.`
 The Cilium Ingress controller will configure that one single LB Service and route traffic for all Ingress objects through it.
+
 How it works conceptually
-Only one Kubernetes Service of type LoadBalancer exists (e.g., cilium-ingress).
-That LB gets one external IP.
-All the Ingress rules you create are combined logically under that one IP/LB.
+* Only one Kubernetes Service of type LoadBalancer exists (e.g., cilium-ingress).
+* That LB gets one external IP.
+* All the Ingress rules you create are combined logically under that one IP/LB.
+
 Benefits
-Saves external IPs and cloud LB resources.
-Useful if you have limited IPs or want a single entry point.
+* Saves external IPs and cloud LB resources.
+* Useful if you have limited IPs or want a single entry point.
+
 Drawbacks
-You must carefully manage host/path conflicts yourself.
-All traffic comes to one IP, so you rely fully on Ingress routing logic.
+* You must carefully manage host/path conflicts yourself.
+* All traffic comes to one IP, so you rely fully on Ingress routing logic.
 
 
 ## Prerequisites
 
 1. Cilium must be configured with the kube-proxy replacement, using kubeProxyReplacement=true. For more information, see kube-proxy replacement.
-2. Cilium must be configured with the L7 proxy enabled using l7Proxy=true (enabled by default).
+2. Cilium must be configured with the L7 proxy enabled using `l7Proxy=true (enabled by default).`
 3. By default, the Ingress controller creates a Service of LoadBalancer type, so your environment will need to support this. Alternatively, you can change this to NodePort or, since Cilium 1.16+, directly expose the Cilium L7 proxy on the host network.
 
 ```bash
@@ -68,14 +74,14 @@ cilium status
 ```
 
 ## How Cilium Ingress and Gateway API differ from other Ingress controllers
-One of the biggest differences between Cilium’s Ingress and Gateway API support and other Ingress controllers is how closely tied the implementation is to the CNI. For Cilium, Ingress and Gateway API are part of the networking stack, and so behave in a different way to other Ingress or Gateway API controllers (even other Ingress or Gateway API controllers running in a Cilium cluster).
+One of the biggest differences between Cilium’s Ingress and Gateway API support and other Ingress controllers is how closely tied the implementation is to the CNI. **For Cilium, Ingress and Gateway API are part of the networking stack**, and so behave in a different way to other Ingress or Gateway API controllers (even other Ingress or Gateway API controllers running in a Cilium cluster).
 
 
 ## Cilium’s ingress config and CiliumNetworkPolicy
 
 for ingress config, there’s also an additional step. Traffic that arrives at Envoy for Ingress or Gateway API is assigned the special ingress identity in Cilium’s Policy engine.
 
-Traffic coming from outside the cluster is usually assigned the world identity (unless there are IP CIDR policies in the cluster). This means that there are actually two logical Policy enforcement points in Cilium Ingress - before traffic arrives at the ingress identity, and after, when it is about to exit the per-node Envoy.
+Traffic coming from outside the cluster is usually assigned the `world` identity (unless there are IP CIDR policies in the cluster). This means that there are actually `two` logical Policy enforcement points in Cilium Ingress - **before traffic arrives at the ingress identity, and after, when it is about to exit the per-node Envoy.**
 
 ![alt text](https://docs.cilium.io/en/stable/_images/ingress-policy.png)
 
@@ -84,7 +90,7 @@ This means that, when applying Network Policy to a cluster, it’s important to 
 
 ## Host Network Mode
 
-Host network mode allows you to expose the Cilium ingress controller (Envoy listener) directly on the host network. This is useful in cases where a LoadBalancer Service is unavailable, such as in development environments or environments with cluster-external loadbalancers.
+Host network mode allows you to expose the Cilium ingress controller (Envoy listener) directly on the host network. This is useful in cases **where a LoadBalancer Service is unavailable, such as in development environments or environments with cluster-external loadbalancers.**
 
 **Note:** Enabling the Cilium ingress controller host network mode automatically disables the LoadBalancer/NodePort type Service mode.
 
@@ -98,11 +104,13 @@ ingressController:
 ```
 
 
-
 ## Example Configuration on Bare Metal / Cloud Infrastructure
 
 ```bash
-cilium upgrade --set ingressController.enabled=true --set ingressController.default=true --set ingressController.loadbalancerMode=shared  --reuse-values
+cilium upgrade --set ingressController.enabled=true \
+ --set ingressController.default=true \
+ --set ingressController.loadbalancerMode=shared  \
+ --reuse-values
 ```
 
 For cloud environments with LoadBalancer support:
@@ -208,9 +216,7 @@ curl --fail -v http://productpage.achaemenid.nl/details/1 | jq
 curl: (22) The requested URL returned error: 403
 ```
 
-
-## Network Policies
-
+---
 ### Network Policies
 
 ### Default Deny Ingress Policy
@@ -347,4 +353,16 @@ curl https://bookinfo.example.com/details/1
 {"id":1,"author":"William Shakespeare","year":1595,"type":"paperback","pages":200,"publisher":"PublisherA","language":"English","ISBN-10":"1234567890","ISBN-13":"123-1234567890"}
 ```
 
+---
 
+## Defaults certificate for Ingresses
+
+Cilium can use a default certificate for ingresses without .spec.tls[].secretName set. It’s still necessary to have .spec.tls[].hosts defined.
+
+```bash
+helm upgrade cilium cilium/cilium --version 1.19.1 \
+   --namespace kube-system \
+   --reuse-values \
+   --set ingressController.defaultSecretNamespace=kube-system \
+   --set ingressController.defaultSecretName=default-cert
+```

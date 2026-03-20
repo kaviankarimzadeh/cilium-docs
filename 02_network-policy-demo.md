@@ -137,3 +137,92 @@ kubectl -n kube-system exec cilium-tqzvw -- cilium-dbg policy get
 ```bash
 kubectl exec -it -n kube-system cilium-tqzvw -- cilium-dbg monitor -v --type l7
 ```
+
+---
+
+### lock down external traffic
+By default, all the external traffic is allowed. Let’s apply a CiliumNetworkPolicy to lock down external traffic.
+
+```yaml
+apiVersion: "cilium.io/v2"
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: "external-lockdown"
+spec:
+  description: "Block all the traffic originating from outside of the cluster"
+  endpointSelector: {}
+  ingress:
+  - fromEntities:
+    - cluster
+```
+
+### allow only a specific set of IP addresses
+to allow only a specific set of IP addresses to access the Ingress.
+
+```yaml
+apiVersion: "cilium.io/v2"
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: "allow-cidr"
+spec:
+  description: "Allow all the traffic originating from a specific CIDR"
+  endpointSelector:
+    matchExpressions:
+    - key: reserved:ingress
+      operator: Exists
+  ingress:
+  - fromCIDRSet:
+    # Please update the CIDR to match your environment
+    - cidr: 172.18.0.1/32
+```
+
+
+### Default Deny Ingress Policy
+
+```yaml
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: "default-deny"
+spec:
+  description: "Block all the traffic (except DNS) by default"
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        io.kubernetes.pod.namespace: kube-system
+        k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: '53'
+        protocol: UDP
+      rules:
+        dns:
+        - matchPattern: '*'
+  endpointSelector:
+    matchExpressions:
+    - key: io.kubernetes.pod.namespace
+      operator: NotIn
+      values:
+      - kube-system
+```
+
+
+### to allow ingress traffic to the /details endpoint
+
+```yaml
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: allow-ingress-egress
+spec:
+  description: "Allow all the egress traffic from reserved ingress identity to any endpoints in the cluster"
+  endpointSelector:
+    matchExpressions:
+    - key: reserved:ingress
+      operator: Exists
+  egress:
+  - toEntities:
+    - cluster
+```

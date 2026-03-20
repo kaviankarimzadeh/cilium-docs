@@ -61,3 +61,44 @@ kubectl get pods --all-namespaces -o custom-columns=NAMESPACE:.metadata.namespac
 ```bash
 kubectl -n kube-system exec ds/cilium -- cilium status
 ```
+
+
+### check masquarade status
+```bash
+kubectl -n kube-system exec ds/cilium -- cilium-dbg status | grep Masquerading
+```
+
+### check masquarade ip 
+```bash
+kubectl -n kube-system exec ds/cilium -- cilium-dbg bpf ipmasq list
+```
+
+
+### check KubeProxyReplacement
+```bash
+kubectl -n kube-system exec ds/cilium -- cilium-dbg status | grep KubeProxyReplacement
+```
+
+### full details
+```bash
+kubectl -n kube-system exec ds/cilium -- cilium-dbg status --verbose
+```
+
+
+### service list
+```bash
+kubectl -n kube-system exec ds/cilium -- cilium-dbg service list
+```
+
+
+### verify egress 
+
+```bash
+kubectl -n kube-system exec ds/cilium -- cilium-dbg bpf egress list
+```
+
+### egress stats
+
+```bash
+kubectl -n kube-system exec ds/cilium -- cilium-dbg shell -- db/show nat-stats
+```

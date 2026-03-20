@@ -1,6 +1,6 @@
 ## Egress Gateway
 
-The egress gateway feature routes all IPv4 and IPv6 connections originating from pods and destined to specific cluster-external CIDRs through particular nodes, called "gateway nodes".
+The egress gateway feature routes all IPv4 and IPv6 connections originating from pods and destined to specific cluster-external CIDRs through `particular nodes`, called `"gateway nodes"`.
 
 When the egress gateway feature is enabled and egress gateway policies are in place, matching packets that leave the cluster are masqueraded with selected, predictable IPs associated with the gateway nodes.
 
