@@ -25,9 +25,9 @@ The eBPF-based implementation is the most efficient implementation. It can be en
 
 The eBPF-based masquerading can masquerade packets of the following L4 protocols:
 
-TCP
-UDP
-ICMP
+- TCP
+- UDP
+- ICMP
 
 By default, all packets from a pod destined to an IP address outside of the ipv4-native-routing-cidr range are masqueraded, except for packets destined to other cluster nodes (as with ipv6-native-routing-cidr for IPv6).
 
