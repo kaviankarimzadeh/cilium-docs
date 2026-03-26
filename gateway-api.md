@@ -4,9 +4,9 @@ Cilium Gateway API provides a modern, standards-based approach to ingress and lo
 
 ## Prerequisites
 
-Cilium must be configured with the kube-proxy replacement, using kubeProxyReplacement=true. For more information, see kube-proxy replacement.
-Cilium must be configured with the L7 proxy enabled using l7Proxy=true (enabled by default).
-The below CRDs from Gateway API v1.4.1 must be pre-installed. Please refer to the documentation for installation steps. Alternatively, the below snippet could be used.
+Cilium must be configured with the kube-proxy replacement, using `kubeProxyReplacement=true`. For more information, see kube-proxy replacement.
+Cilium must be configured with the L7 proxy enabled using `l7Proxy=true (enabled by default)`.
+The below `CRDs from Gateway API v1.4.1` must be pre-installed. Please refer to the documentation for installation steps. Alternatively, the below snippet could be used.
 
 ## Installation
 
@@ -17,7 +17,7 @@ $ cilium install --version 1.19.1 --set kubeProxyReplacement=true --set gatewayA
 
 ## Host network mode
 
-Host network mode allows you to expose the Cilium Gateway API Gateway directly on the host network. This is useful in cases where a LoadBalancer Service is unavailable, such as in development environments or environments with cluster-external loadbalancers.
+Host network mode allows you to expose the Cilium Gateway API Gateway directly on the host network. This is useful in cases where a LoadBalancer Service is unavailable, **such as in development environments or environments with cluster-external loadbalancers.**
 
 ```yaml
 gatewayAPI:
@@ -69,7 +69,7 @@ spec:
     - dns01:
         cloudflare:
           apiTokenSecretRef:
-            name: cloudflare-api-token-secret
+            name: cloudflare-api-token-secret #By default, this namespace is cert-manager
             key: api-token
       selector:
         dnsZones:

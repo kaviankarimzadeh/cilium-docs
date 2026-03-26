@@ -1,0 +1,16 @@
+### enable metrics
+
+```yaml
+prometheus:
+  enabled: true
+
+operator:
+  prometheus:
+    enabled: true
+
+hubble:
+  enabled: true
+  metrics:
+    enableOpenMetrics: true
+    enabled: "{dns,drop,tcp,flow,port-distribution,icmp,httpV2:exemplars=true;labelsContext=source_ip\,source_namespace\,source_workload\,destination_ip\,destination_namespace\,destination_workload\,traffic_direction}"
+```

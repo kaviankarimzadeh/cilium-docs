@@ -65,7 +65,7 @@ ipam:
 ```
 
 ### Important operational rules
-Never modify existing elements in c`lusterPoolIPv4PodCIDRList` — changes cause unexpected behavior. If the pool is exhausted, add a new element to the list instead. 
+Never modify existing elements in `clusterPoolIPv4PodCIDRList` — changes cause unexpected behavior. If the pool is exhausted, add a new element to the list instead. 
 The minimum mask length is `/30`, with a recommended minimum of at least `/29`. 
 Changing `clusterPoolIPv4MaskSize` after initial install is also not possible. 
 
@@ -78,5 +78,5 @@ kubectl get ciliumnodes -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.st
 ## verification
 
 ```bash
-cilium-dbg status --all-addresses
+kubectl -n kube-system exec ds/cilium -- cilium-dbg status --all-addresses
 ```

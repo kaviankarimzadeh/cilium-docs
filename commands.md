@@ -102,3 +102,10 @@ kubectl -n kube-system exec ds/cilium -- cilium-dbg bpf egress list
 ```bash
 kubectl -n kube-system exec ds/cilium -- cilium-dbg shell -- db/show nat-stats
 ```
+
+
+### 
+
+```bash
+kubectl -n kube-system exec -ti ds/cilium -- cilium debuginfo
+```
