@@ -171,10 +171,13 @@ Routing:                    Network: Tunnel [geneve]   Host: Legacy
 
 ### result -- VXLAN vs Geneve
 Dashboard graph between switching modes
+
 ![Alt text](./images/encap01.png)
 
 Here's what the data actually says:
+
 #### tcp_throughput_baseline
+
 ![Alt text](./images/encap02.png)
 
 VXLAN wins on throughput, but the retransmit story is the real finding.
