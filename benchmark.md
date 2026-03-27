@@ -401,7 +401,7 @@ bash-5.1# netperf -H 46.224.162.226 -p 12865 -t TCP_RR -l 60 -- -o MIN_LATENCY,M
 bash-5.1# iperf3 -c 46.224.162.226 -u -b 1G -t 60 -J > udp_masq_ebpf.json
 ```
 
-test was not successful in eBPF mode!!! when testing within cluster!
+##### test was not successful in eBPF mode!!! when testing within cluster! (maybe it will fix by this https://docs.cilium.io/en/stable/network/concepts/masquerading/#masquerade-traffic-to-remote-nodes - not tested!)
 so tried with external IP outside of cluster for server:
 
 ```bash
@@ -465,3 +465,4 @@ If your services make short-lived HTTP/1.1 calls, gRPC connections that reconnec
 Strong result. Three wins for eBPF simultaneously — more throughput, fewer retransmits, and less host CPU.
 **The throughput chart tells the full story**. Notice how iptables has two visible dips (around seconds 24–25 and 51–52) where it drops to ~6.3–6.7 Gbps. Those are conntrack lock contention events — under 8 parallel streams, multiple streams compete for the conntrack table lock at the same time, causing bursts of retransmits and temporary throughput collapse. eBPF has per-CPU maps with no shared lock, so you don't see those dips — the eBPF line stays consistently above 8 Gbps after the first ~8 seconds of warmup.
 **The remote CPU jump (+5.2%) is not a concern**  — the receiver is processing 786 Mbps more data. More bytes in = more CPU out. If you normalise CPU per Gbps received, eBPF is cheaper on the receiver side too.
+
